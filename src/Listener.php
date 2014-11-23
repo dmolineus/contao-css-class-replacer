@@ -45,7 +45,6 @@ class Listener
             );
 
             $classNode->nodeValue = $replacement;
-            $attr->setNamedItem($classNode);
         }
     }
 
