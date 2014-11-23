@@ -4,7 +4,7 @@ namespace Toflar\Contao\CssClassReplacer;
 
 use Symfony\Component\CssSelector\CssSelector;
 
-class Model extends \Model
+class Rule extends \Model
 {
     /**
      * Table name

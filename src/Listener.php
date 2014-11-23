@@ -7,7 +7,7 @@ class Listener
 {
     public function replaceCssClasses($buffer)
     {
-        if (($rules = Model::findAll()) === null) {
+        if (($rules = Rule::findAll()) === null) {
             return $buffer;
         }
 
@@ -16,7 +16,7 @@ class Listener
         $xPath = new \DOMXPath($doc);
 
         /**
-         * @var $rule \Toflar\Contao\CssClassReplacer\Model
+         * @var $rule \Toflar\Contao\CssClassReplacer\Rule
          */
         foreach ($rules as $rule) {
             try {
