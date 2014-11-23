@@ -126,8 +126,8 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
             'sql'                     => "text NULL",
             'save_callback'           => array(
                 function($value, $dc) {
-                    if (($model = \Toflar\Contao\CssClassReplacer\Model::findByPk($dc->id)) !== null) {
-                        $model->getXPathExpr();
+                    if (($rule = \Toflar\Contao\CssClassReplacer\Rule::findByPk($dc->id)) !== null) {
+                        $rule->getXPathExpr();
                     }
 
                     return $value;
