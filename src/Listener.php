@@ -12,7 +12,8 @@ class Listener
         }
 
         $doc = new \DOMDocument();
-        $doc->loadHTML($buffer);
+        $doc->strictErrorChecking = false;
+        @$doc->loadHTML($buffer);
         $xPath = new \DOMXPath($doc);
 
         /**
