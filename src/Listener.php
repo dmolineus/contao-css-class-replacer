@@ -22,8 +22,9 @@ class Listener
         foreach ($rules as $rule) {
             try {
                 $nodeList = $xPath->evaluate($rule->getXPathExpr());
+
                 foreach ($nodeList as $node) {
-                    $this->modifyNode($node);
+                    $this->modifyNode($node, $rule);
                 }
 
             } catch (\Exception $e) {}
@@ -32,15 +33,18 @@ class Listener
         return $doc->saveHTML();
     }
 
-    private function modifyNode(\DOMNode $node)
+    private function modifyNode(\DOMNode $node, Rule $rule)
     {
         $attr = $node->attributes;
         $classNode = $attr->getNamedItem('class');
+
         if ($classNode) {
-            $classNode->nodeValue = \String::parseSimpleTokens(
-                $classNode->nodeValue,
+            $replacement = \String::parseSimpleTokens(
+                $rule->replacement,
                 $this->createTokensFromClassString($classNode->nodeValue)
             );
+
+            $classNode->nodeValue = $replacement;
             $attr->setNamedItem($classNode);
         }
     }
@@ -61,4 +65,4 @@ class Listener
 
         return $tokens;
     }
-} 
+}
