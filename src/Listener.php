@@ -7,7 +7,7 @@ class Listener
 {
     public function replaceCssClasses($buffer)
     {
-        if (($rules = Rule::findByCurrentlyActiveTheme()) === null) {
+        if (($rules = Rule::findPublishedByCurrentlyActiveTheme()) === null) {
             return $buffer;
         }
 

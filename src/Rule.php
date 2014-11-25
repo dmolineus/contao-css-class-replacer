@@ -35,9 +35,16 @@ class Rule extends \Model
      * @param array
      * @return static
      */
-    public static function findByThemeId($id, array $arrOptions=array())
+    public static function findPublishedByThemeId($id, array $arrOptions=array())
     {
-        return static::findBy('pid', $id, $arrOptions);
+        $t = static::$strTable;
+        $arrColumns = array("$t.pid=?");
+
+        if (!BE_USER_LOGGED_IN) {
+            $arrColumns[] = "$t.published=1";
+        }
+
+        return static::findBy($arrColumns, $id, $arrOptions);
     }
 
 
@@ -47,7 +54,7 @@ class Rule extends \Model
      * @param array
      * @return static
      */
-    public static function findByCurrentlyActiveTheme(array $arrOptions=array())
+    public static function findPublishedByCurrentlyActiveTheme(array $arrOptions=array())
     {
         global $objPage;
 
@@ -55,6 +62,6 @@ class Rule extends \Model
             return null;
         }
 
-        return static::findByThemeId($layout->pid, $arrOptions);
+        return static::findPublishedByThemeId($layout->pid, $arrOptions);
     }
-} 
+}
