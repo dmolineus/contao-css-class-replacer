@@ -126,8 +126,9 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
             'sql'                     => "text NULL",
             'save_callback'           => array(
                 function($value, $dc) {
-                    if (($rule = \Toflar\Contao\CssClassReplacer\Rule::findByPk($dc->id)) !== null) {
-                        $rule->getXPathExpr();
+                    if ($dc->activeRecord->type === 'css') {
+                        // throws an exception if not supported
+                        \Symfony\Component\CssSelector\CssSelector::toXPath($value);
                     }
 
                     return $value;
