@@ -32,20 +32,22 @@ class Rule extends \Model
      * Find by theme id
      *
      * @param int
+     * @param array
      * @return static
      */
-    public static function findByThemeId($id)
+    public static function findByThemeId($id, array $arrOptions=array())
     {
-        return static::findBy('pid', $id);
+        return static::findBy('pid', $id, $arrOptions);
     }
 
 
     /**
      * Find by currently active theme
      *
+     * @param array
      * @return static
      */
-    public static function findByCurrentlyActiveTheme()
+    public static function findByCurrentlyActiveTheme(array $arrOptions=array())
     {
         global $objPage;
 
@@ -53,6 +55,6 @@ class Rule extends \Model
             return null;
         }
 
-        return static::findByThemeId($layout->pid);
+        return static::findByThemeId($layout->pid, $arrOptions);
     }
 } 
