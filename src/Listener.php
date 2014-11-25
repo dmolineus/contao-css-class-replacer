@@ -11,6 +11,8 @@ class Listener
             return $buffer;
         }
 
+        $start = microtime(true);
+
         $doc = new \DOMDocument();
         $doc->strictErrorChecking = false;
         @$doc->loadHTML($buffer);
@@ -29,6 +31,8 @@ class Listener
 
             } catch (\Exception $e) {}
         }
+
+        $this->addTimeToDebugBar($start);
 
         return $doc->saveHTML();
     }
@@ -63,5 +67,17 @@ class Listener
         }
 
         return $tokens;
+    }
+
+    private function addTimeToDebugBar($start)
+    {
+        if (!$GLOBALS['TL_CONFIG']['debugMode']) {
+            return;
+        }
+
+        $elapsed = (microtime(true) - $start);
+        $ms = \System::getFormattedNumber(($elapsed * 1000), 0);
+
+        $GLOBALS['TL_DEBUG']['css-class-replacer'] = 'CSS replacements time: ' . $ms . ' ms';
     }
 }
