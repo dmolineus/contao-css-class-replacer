@@ -5,6 +5,17 @@ namespace Toflar\Contao\CssClassReplacer;
 
 class Listener
 {
+    /**
+     * @var \DOMDocument
+     */
+    private $doc;
+
+    /**
+     * Replace CSS classes
+     *
+     * @param $buffer
+     * @return string
+     */
     public function replaceCssClasses($buffer)
     {
         if (($rules = Rule::findPublishedByCurrentlyActiveTheme()) === null) {
@@ -13,10 +24,10 @@ class Listener
 
         $start = microtime(true);
 
-        $doc = new \DOMDocument();
-        $doc->strictErrorChecking = false;
-        @$doc->loadHTML($buffer);
-        $xPath = new \DOMXPath($doc);
+        $this->doc = new \DOMDocument();
+        $this->doc->strictErrorChecking = false;
+        @$this->doc->loadHTML($buffer);
+        $xPath = new \DOMXPath($this->doc);
 
         /**
          * @var $rule \Toflar\Contao\CssClassReplacer\Rule
@@ -34,14 +45,15 @@ class Listener
 
         $this->addTimeToDebugBar($start);
 
-        return $doc->saveHTML();
+        return $this->doc->saveHTML();
     }
 
-    private function modifyNode(\DOMNode $node, Rule $rule)
+    private function modifyNode(\DOMElement $node, Rule $rule)
     {
         $attr = $node->attributes;
         $classNode = $attr->getNamedItem('class');
 
+        // Replace if it already exists
         if ($classNode) {
             $replacement = \String::parseSimpleTokens(
                 $rule->replacement,
@@ -49,6 +61,12 @@ class Listener
             );
 
             $classNode->nodeValue = $replacement;
+        } else {
+            // Otherwise append
+            $node->setAttribute('class', \String::parseSimpleTokens(
+                $rule->replacement,
+                $this->createTokensFromClassString('')
+            ));
         }
     }
 
@@ -57,6 +75,10 @@ class Listener
         $tokens = array(
             'all'   => $classString
         );
+
+        if ($classString === '') {
+            return $tokens;
+        }
 
         $chunks = preg_split('/ +/', $classString, -1, PREG_SPLIT_NO_EMPTY);
         $i = 1;
