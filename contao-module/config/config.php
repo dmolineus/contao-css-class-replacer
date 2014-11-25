@@ -8,6 +8,10 @@ $GLOBALS['BE_MOD']['design']['themes']['exportCssClassReplacerRules'] = array(
     'Toflar\Contao\CssClassReplacer\XmlExporter',
     'export'
 );
+$GLOBALS['BE_MOD']['design']['themes']['importCssClassReplacerRules'] = array(
+    'Toflar\Contao\CssClassReplacer\XmlImporter',
+    'import'
+);
 
 /**
  * Hooks

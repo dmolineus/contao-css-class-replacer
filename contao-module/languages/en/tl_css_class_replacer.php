@@ -17,6 +17,7 @@ $GLOBALS['TL_LANG']['tl_css_class_replacer']['copy']                      = arra
 $GLOBALS['TL_LANG']['tl_css_class_replacer']['delete']                    = array('Delete rule', 'Delete rule ID %s');
 $GLOBALS['TL_LANG']['tl_css_class_replacer']['toggle']                    = array('Publish/Unpublish rule', 'Publish/Unpublish rule ID %s');
 $GLOBALS['TL_LANG']['tl_css_class_replacer']['show']                      = array('Rule details', 'Show details of rule ID %s');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['import']                    = array('Import rules', 'Imports rules from an XML file');
 $GLOBALS['TL_LANG']['tl_css_class_replacer']['export']                    = array('Export rules', 'Exports all the rules as XML file');
 
 /**
@@ -29,3 +30,8 @@ $GLOBALS['TL_LANG']['tl_css_class_replacer']['title_legend']    = 'Selector & Re
  */
 $GLOBALS['TL_LANG']['tl_css_class_replacer']['type']['css']    = 'CSS';
 $GLOBALS['TL_LANG']['tl_css_class_replacer']['type']['xpath']  = 'XPath';
+
+/**
+ * Import
+ */
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['source'] = array('Source', 'Choose one or more XML files containing the rules here.');

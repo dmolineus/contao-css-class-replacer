@@ -46,7 +46,10 @@ class XmlExporter
     private function createRuleElement($model)
     {
         $rule = $this->doc->createElement('rule');
-        $rule->setAttribute('type', $model->type);
+
+        $type = $this->doc->createElement('type');
+        $typeValue = $this->doc->createCDATASection($model->type);
+        $type->appendChild($typeValue);
 
         $selector = $this->doc->createElement('selector');
         $selectorValue = $this->doc->createCDATASection($model->selector);
@@ -59,6 +62,7 @@ class XmlExporter
         $published = $this->doc->createElement('published');
         $published->nodeValue = $model->published ? 'true' : 'false';
 
+        $rule->appendChild($type);
         $rule->appendChild($selector);
         $rule->appendChild($replacement);
         $rule->appendChild($published);

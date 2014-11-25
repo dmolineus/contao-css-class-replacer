@@ -45,6 +45,12 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
                 'class'               => 'header_edit_all',
                 'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
             ),
+            'import' => array
+            (
+                'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['import'],
+                'href'                => 'key=importCssClassReplacerRules',
+                'icon'                => 'system/modules/css-class-replacer/assets/import.png'
+            ),
             'export' => array
             (
                 'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['export'],
