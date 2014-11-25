@@ -55,7 +55,7 @@ class Listener
         );
 
         $chunks = preg_split('/ +/', $classString, -1, PREG_SPLIT_NO_EMPTY);
-        $i = 0;
+        $i = 1;
 
         foreach ($chunks as $class) {
             $tokens['class_' . $i] = $class;
