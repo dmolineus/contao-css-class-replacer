@@ -14,6 +14,7 @@ class Rule extends \Model
 
     /**
      * Get XPath expression
+     *
      * @return string
      * @throws \Exception
      */
@@ -24,5 +25,34 @@ class Rule extends \Model
         }
 
         return $this->selector;
+    }
+
+
+    /**
+     * Find by theme id
+     *
+     * @param int
+     * @return static
+     */
+    public static function findByThemeId($id)
+    {
+        return static::findBy('pid', $id);
+    }
+
+
+    /**
+     * Find by currently active theme
+     *
+     * @return static
+     */
+    public static function findByCurrentlyActiveTheme()
+    {
+        global $objPage;
+
+        if (($layout = \LayoutModel::findByPk($objPage->layout)) === null) {
+            return null;
+        }
+
+        return static::findByThemeId($layout->pid);
     }
 } 
