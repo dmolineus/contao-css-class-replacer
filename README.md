@@ -78,3 +78,4 @@ Give your page a CSS class `very_special` which Contao then adds to the `<body>`
 ## Performance
 
 Working on the whole HTML document before sending it to the browser is extensive work! Obviously the more rules you define the longer it takes! For every request sent to Contao, the extension will take its time to work on the output and apply your rules. You should thus use the page caching!
+If you activate the debug mode you can see the time the replacer needs in the debug bar.
