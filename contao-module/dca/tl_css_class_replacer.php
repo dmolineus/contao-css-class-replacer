@@ -35,7 +35,6 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
         'label' => array
         (
             'fields'                  => array('selector'),
-            //'label_callback'          => array('x', 'x')
         ),
         'global_operations' => array
         (
@@ -45,6 +44,12 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
                 'href'                => 'act=select',
                 'class'               => 'header_edit_all',
                 'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
+            ),
+            'export' => array
+            (
+                'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['export'],
+                'href'                => 'key=exportCssClassReplacerRules',
+                'icon'                => 'system/modules/css-class-replacer/assets/export.png'
             )
         ),
         'operations' => array

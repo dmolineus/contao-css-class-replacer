@@ -4,6 +4,10 @@
  * Back end modules
  */
 $GLOBALS['BE_MOD']['design']['themes']['tables'][] = 'tl_css_class_replacer';
+$GLOBALS['BE_MOD']['design']['themes']['exportCssClassReplacerRules'] = array(
+    'Toflar\Contao\CssClassReplacer\XmlExporter',
+    'export'
+);
 
 /**
  * Hooks
