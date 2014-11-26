@@ -31,7 +31,8 @@ class Listener extends \Controller
         $buffer = $this->replaceInsertTags($buffer);
 
         // Tell the parser which charset being used.
-        $buffer = '<?xml encoding="' . $GLOBALS['TL_CONFIG']['characterSet'] . '" ?>' . $buffer;
+        $encoding = '<?xml encoding="' . $GLOBALS['TL_CONFIG']['characterSet'] . '" ?>';
+        $buffer   = $encoding . $buffer;
 
         $this->doc = new \DOMDocument();
         $this->doc->strictErrorChecking = false;
@@ -58,7 +59,9 @@ class Listener extends \Controller
 
         $this->addTimeToDebugBar($stopWatch);
 
-        return $this->doc->saveHTML();
+        // Remove xml charset definition again
+        $buffer = $this->doc->saveHTML();
+        return preg_replace('/' . preg_quote($encoding) . '/', '', $buffer, 1);
     }
 
     private function modifyNode(\DOMElement $node, Rule $rule)
