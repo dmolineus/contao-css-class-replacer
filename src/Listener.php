@@ -34,7 +34,7 @@ class Listener
          */
         foreach ($rules as $rule) {
             try {
-                $nodeList = $xPath->evaluate($rule->getXPathExpr());
+                $nodeList = $xPath->query($rule->getXPathExpr());
 
                 foreach ($nodeList as $node) {
                     $this->modifyNode($node, $rule);
