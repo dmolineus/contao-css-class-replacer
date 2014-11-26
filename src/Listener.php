@@ -61,7 +61,7 @@ class Listener extends \Controller
 
         // Remove xml charset definition again
         $buffer = $this->doc->saveHTML();
-        return preg_replace('/' . preg_quote($encoding) . '/', '', $buffer, 1);
+        return preg_replace('/' . preg_quote($encoding, '/') . '/', '', $buffer, 1);
     }
 
     private function modifyNode(\DOMElement $node, Rule $rule)
