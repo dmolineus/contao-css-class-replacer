@@ -61,4 +61,16 @@ class BackendHelper
         $objVersions->create();
         \System::log('A new version of record "tl_css_class_replacer.id='.$intId.'" has been created', __METHOD__, TL_GENERAL);
     }
+
+    /**
+     * Generate the child record row.
+     *
+     * @param array $row Current row.
+     *
+     * @return string
+     */
+    public function generateRow($row)
+    {
+        return $row['selector'] . ' <span class="tl_gray">[' . $row['type'] . ']</span>';
+    }
 } 

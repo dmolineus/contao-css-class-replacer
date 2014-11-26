@@ -27,10 +27,11 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
     (
         'sorting' => array
         (
-            'mode'                    => 1,
-            'fields'                  => array('selector'),
-            'flag'                    => 1,
-            'panelLayout'             => 'filter;search,limit'
+            'mode'                    => 4,
+            'fields'                  => array('sorting'),
+            'headerFields'            => array('name', 'author'),
+            'panelLayout'             => 'filter,sort;search,limit',
+            'child_record_callback'   => array('Toflar\Contao\CssClassReplacer\BackendHelper', 'generateRow')
         ),
         'label' => array
         (
@@ -71,6 +72,13 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
                 'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['copy'],
                 'href'                => 'act=copy',
                 'icon'                => 'copy.gif'
+            ),
+            'cut' => array
+            (
+                'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['cut'],
+                'href'                => 'act=paste&amp;mode=cut',
+                'icon'                => 'cut.gif',
+                'attributes'          => 'onclick="Backend.getScrollOffset()"'
             ),
             'delete' => array
             (
@@ -116,6 +124,11 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
         (
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ),
+        'sorting' => array
+        (
+            'sorting'                 => true,
+            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        ),
         'type' => array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['type'],
@@ -132,6 +145,8 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
             'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['selector'],
             'exclude'                 => true,
             'search'                  => true,
+            'sorting'                 => true,
+            'flag'                    => 1,
             'inputType'               => 'textarea',
             'eval'                    => array('mandatory'=>true, 'decodeEntities'=>true, 'tl_class'=>'clr'),
             'sql'                     => "text NULL",
