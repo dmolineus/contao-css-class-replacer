@@ -75,17 +75,25 @@ class XmlImporter
         $doc = new \DOMDocument('1.1', 'UTF-8');
         $doc->loadXML($file->getContent());
 
-        $rules = $doc->getElementsByTagName('rule');
+        $rules     = $doc->getElementsByTagName('rule');
+        $sortIndex = 0;
+        $lastRule  = Rule::findBy('pid', $themeId, array('order' => 'sorting DESC', 'limit' => 1));
+
+        if ($lastRule) {
+            $sortIndex = $lastRule->sorting + 128;
+        }
 
         foreach ($rules as $rule) {
-
             $set = array(
                 'pid'           => $themeId,
+                'sorting'       => $sortIndex,
                 'type'          => $rule->getElementsByTagName('type')->item(0)->nodeValue,
                 'selector'      => $rule->getElementsByTagName('selector')->item(0)->nodeValue,
                 'replacement'   => $rule->getElementsByTagName('replacement')->item(0)->nodeValue,
                 'published'     => (($rule->getElementsByTagName('published')->item(0)->nodeValue === 'true') ? '1' : ''),
             );
+
+            $sortIndex += 128;
 
             \Database::getInstance()->prepare('INSERT INTO tl_css_class_replacer %s')
                 ->set($set)

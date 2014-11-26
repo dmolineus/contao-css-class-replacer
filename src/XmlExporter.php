@@ -17,7 +17,7 @@ class XmlExporter
      */
     public function export(\DataContainer $dc)
     {
-        if (($ruleCollection = Rule::findBy('pid', $dc->id)) === null) {
+        if (($ruleCollection = Rule::findBy('pid', $dc->id, array('order' => 'sorting'))) === null) {
             return;
         }
 
