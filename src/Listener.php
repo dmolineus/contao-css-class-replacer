@@ -61,40 +61,11 @@ class Listener extends \Controller
 
         // Replace if it already exists
         if ($classNode) {
-            $replacement = \String::parseSimpleTokens(
-                $rule->replacement,
-                $this->createTokensFromClassString($classNode->nodeValue)
-            );
-
-            $classNode->nodeValue = $replacement;
+            $classNode->nodeValue = $rule->applyRulesOnClass($classNode->nodeValue);
         } else {
             // Otherwise append
-            $node->setAttribute('class', \String::parseSimpleTokens(
-                $rule->replacement,
-                $this->createTokensFromClassString('')
-            ));
+            $node->setAttribute('class', $rule->applyRulesOnClass($classNode->nodeValue));
         }
-    }
-
-    private function createTokensFromClassString($classString)
-    {
-        $tokens = array(
-            'all'   => $classString
-        );
-
-        if ($classString === '') {
-            return $tokens;
-        }
-
-        $chunks = preg_split('/ +/', $classString, -1, PREG_SPLIT_NO_EMPTY);
-        $i = 1;
-
-        foreach ($chunks as $class) {
-            $tokens['class_' . $i] = $class;
-            $i++;
-        }
-
-        return $tokens;
     }
 
     private function addTimeToDebugBar(Stopwatch $stopWatch)

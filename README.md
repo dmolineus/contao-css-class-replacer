@@ -5,14 +5,14 @@ The elements you want to modify are either selected using an XPath expression or
 
 After the installation you can define CSS replacement rules per theme.
 
-## Explanation
+## Add directives
 
 Let's say you want to give your website some Bootstrap magic and thus need to add the CSS class `row` to every article.
 Instead of modifying the `mod_article` templates you can simply define a new replacement rule:
 
-| Selector (CSS) | Replacement  |
-| ------------- |:-------------:|
-|  div.mod_article    |  mod_article row |
+| Selector (CSS) | Enable add directives  | Add directives  |
+| ------------- |:-------------:|:-------------:|
+|  div.mod_article    |  true | `row` |
 
 This would e.g. turn
 
@@ -24,16 +24,24 @@ into this:
 
 
 ```
-<div class="mod_article row">
+<div class="mod_article first last row">
 ```
 
-## Simple Tokens
+## Replace directives
 
-Since you might want to keep the existing classes instead of replacing them completely, you can just use the Simple Token `##all##` for the existing ones:
+Replacement directives are a little more complicated than add directives because they essentially cover 3 use cases:
 
-| Selector (CSS) | Replacement  |
-| ------------- |:-------------:|
-|  div.mod_article    |  ##all## row |
+* Replace an existing class using a simple string comparison
+* Delete an existing class
+* Replace an existing class using a regular expression
+
+
+### Replace an existing class using a simple string comparison
+
+
+| Selector (CSS) | Enable replacement directives  | Replacement directives  |
+| ------------- |:-------------:|:-------------:|
+|  div.mod_article    |  true | `first` -> `not_first` |
 
 This would turn
 
@@ -45,14 +53,18 @@ into this:
 
 
 ```
-<div class="mod_article first last block row">
+<div class="mod_article not_first last block">
 ```
 
-You can even specify a specific index. For example if you know that your desired class is alway on the second position, you can refer to it using `##class_2##`. Example:
 
-| Selector (CSS) | Replacement  |
-| ------------- |:-------------:|
-|  div.mod_article    |  ##class_2## row |
+### Delete an existing class
+
+
+| Selector (CSS) | Enable replacement directives  | Replacement directives  |
+| ------------- |:-------------:|:-------------:|
+|  div.mod_article    |  true | `first` -> `(blank)` |
+
+`(blank)` in this case does not mean you have to enter `(blank)` but rather just leave it blank.
 
 This would turn
 
@@ -60,11 +72,47 @@ This would turn
 <div class="mod_article first last block">
 ```
 
-into this (the second element is "first" plus "row" is added):
+into this:
 
 
 ```
-<div class="first row">
+<div class="mod_article last block">
+```
+
+
+
+### Replace an existing class using a regular expression
+
+This is very, very powerful but obviously also a bit slower than simple string replacements.
+
+Let's say you want to replace all `level_*` of your navigation module by `different_level_*`. You can do this with the simple string comparison but you would need to define rules for every level like this:
+
+* level_1 -> different_level_1
+* level_2 -> different_level_2
+* etc.
+
+This is tedious, so we use the regular expression feature.
+Regular expression replacement directives are indicated by the prefix `r:` whereas the `r` obviously stands for `regular expression`:
+
+| Selector (CSS) | Enable replacement directives  | Replacement directives  |
+| ------------- |:-------------:|:-------------:|
+|  .mod_navigation ul    |  true | `r:/level_(\d)/` -> `different_level_$1` |
+
+This would turn
+
+```
+<nav class="mod_navigation">
+	<ul class="level_1">
+		<ul class="level_2">
+```
+
+into this:
+
+
+```
+<nav class="mod_navigation">
+	<ul class="different_level_1">
+		<ul class="different_level_2">
 ```
 
 ## Page specific replacements
@@ -77,5 +125,6 @@ Give your page a CSS class `very_special` which Contao then adds to the `<body>`
 
 ## Performance
 
-Working on the whole HTML document before sending it to the browser is extensive work! Obviously the more rules you define the longer it takes! For every request sent to Contao, the extension will take its time to work on the output and apply your rules. You should thus use the page caching!
+Working on the whole HTML document before sending it to the browser is extensive work! Obviously the more rules you define the longer it takes! For every request sent to Contao, the extension will take its time to work on the output and apply your rules. You should thus use page caching!
+
 If you activate the debug mode you can see the time the replacer needs in the debug bar.

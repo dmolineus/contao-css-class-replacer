@@ -55,16 +55,29 @@ class XmlExporter
         $selectorValue = $this->doc->createCDATASection($model->selector);
         $selector->appendChild($selectorValue);
 
-        $replacement = $this->doc->createElement('replacement');
-        $replacementValue = $this->doc->createCDATASection($model->replacement);
-        $replacement->appendChild($replacementValue);
+        $enable_replace = $this->doc->createElement('enable_replace');
+        $enable_replace->nodeValue = $model->enable_replace ? 'true' : 'false';
+
+        $replace_directives = $this->doc->createElement('replace_directives');
+        $replace_directivesValue = $this->doc->createCDATASection($model->replace_directives);
+        $replace_directives->appendChild($replace_directivesValue);
+
+        $enable_add = $this->doc->createElement('enable_add');
+        $enable_add->nodeValue = $model->enable_add ? 'true' : 'false';
+
+        $add_directives = $this->doc->createElement('add_directives');
+        $add_directivesValue = $this->doc->createCDATASection($model->add_directives);
+        $add_directives->appendChild($add_directivesValue);
 
         $published = $this->doc->createElement('published');
         $published->nodeValue = $model->published ? 'true' : 'false';
 
         $rule->appendChild($type);
         $rule->appendChild($selector);
-        $rule->appendChild($replacement);
+        $rule->appendChild($enable_replace);
+        $rule->appendChild($replace_directives);
+        $rule->appendChild($enable_add);
+        $rule->appendChild($add_directives);
         $rule->appendChild($published);
 
         return $rule;

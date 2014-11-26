@@ -13,6 +13,12 @@ class Rule extends \Model
     static $strTable = 'tl_css_class_replacer';
 
     /**
+     * Directives cache
+     * @var array|null
+     */
+    private $directivesCache;
+
+    /**
      * Get XPath expression
      *
      * @return string
@@ -35,6 +41,78 @@ class Rule extends \Model
         }
     }
 
+    /**
+     * Create and update the directives
+     */
+    public function updateDirectives()
+    {
+        $directives = array(
+            'replace_search'        => array(),
+            'replace_values'        => array(),
+            'rgxp_replace_search'   => array(),
+            'rgxp_replace_values'   => array(),
+            'add'                   => array()
+        );
+
+        if ($this->enable_replace) {
+            $replace = deserialize($this->replace_directives, true);
+
+            // class => value (for str_replace())
+            foreach ($replace as $row) {
+                $key = $row['key'];
+
+                // Regular expression
+                if (substr($key, 0, 2) === 'r:') {
+                    $key = substr($key, 2);
+                    $directives['rgxp_replace_search'][]    = $key;
+                    $directives['rgxp_replace_values'][]    = $row['value'];
+                } else {
+                    $directives['replace_search'][]         = $key;
+                    $directives['replace_values'][]         = $row['value'];
+                }
+            }
+        }
+
+        if ($this->enable_add) {
+            $directives['add'] = deserialize($this->add_directives, true);
+        }
+
+        $this->directives = json_encode($directives);
+    }
+
+    /**
+     * Apply replacement rules on given CSS class
+     *
+     * @param string
+     */
+    public function applyRulesOnClass($class)
+    {
+        if ($this->directivesCache === null) {
+            $this->directivesCache = json_decode($this->directives, true);
+        }
+
+        // Apply simple replacement directives
+        if ($this->directivesCache['replace_search']) {
+            $class = str_replace($this->directivesCache['replace_search'],
+                $this->directivesCache['replace_values'],
+                $class);
+        }
+
+        // Apply rgxp replacement directives
+        if ($this->directivesCache['rgxp_replace_search']) {
+            $class = preg_replace($this->directivesCache['rgxp_replace_search'],
+                $this->directivesCache['rgxp_replace_values'],
+                $class);
+        }
+
+        // Apply add directives
+        if ($this->directivesCache['add']) {
+            $class .= ' ' . implode(' ', $this->directivesCache['add']);
+        }
+
+        // Clean output
+        return trim(preg_replace('!\s+!',  ' ', $class));
+    }
 
     /**
      * Find by theme id

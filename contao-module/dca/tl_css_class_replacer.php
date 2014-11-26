@@ -109,7 +109,15 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
     // Palettes
     'palettes' => array
     (
-        'default'                     => '{title_legend},type,selector,replacement,published',
+        '__selector__'                => array('enable_replace', 'enable_add'),
+        'default'                     => '{title_legend},type,selector,enable_replace,enable_add,published',
+    ),
+
+    // Sub palettes
+    'subpalettes' => array
+    (
+        'enable_replace'              => 'replace_directives',
+        'enable_add'                  => 'add_directives',
     ),
 
     // Fields
@@ -165,14 +173,41 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
                 }
             )
         ),
-        'replacement' => array
+        'enable_replace' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['replacement'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['enable_replace'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'replace_directives' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['replace_directives'],
             'exclude'                 => true,
             'search'                  => true,
-            'inputType'               => 'textarea',
-            'eval'                    => array('mandatory'=>true, 'decodeEntities'=>true, 'tl_class'=>'clr'),
-            'sql'                     => "text NULL"
+            'inputType'               => 'keyValueWizard',
+            'eval'                    => array('mandatory'=>true, 'decodeEntities'=>true, 'tl_class'=>'clr', 'style'=>'width:300px;'),
+            'sql'                     => "blob NULL"
+        ),
+        'enable_add' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['enable_add'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'add_directives' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['add_directives'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'listWizard',
+            'eval'                    => array('mandatory'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "blob NULL"
         ),
         'published' => array
         (
@@ -185,6 +220,10 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
             'sql'                     => "char(1) NOT NULL default ''"
         ),
         'xpath_expression' => array
+        (
+            'sql'                     => "text NULL"
+        ),
+        'directives' => array
         (
             'sql'                     => "text NULL"
         ),

@@ -32,6 +32,11 @@ class XmlImporter
             foreach ($uploaded as $file) {
                 $this->importRuleSet($file, $dc->id);
             }
+
+            // Let's be nice and update the cache automatically
+            $rules = Rule::findAll();
+            $helper = new BackendHelper();
+            $helper->updateCacheableValues($rules);
         }
 
         // Return the form
@@ -85,12 +90,15 @@ class XmlImporter
 
         foreach ($rules as $rule) {
             $set = array(
-                'pid'           => $themeId,
-                'sorting'       => $sortIndex,
-                'type'          => $rule->getElementsByTagName('type')->item(0)->nodeValue,
-                'selector'      => $rule->getElementsByTagName('selector')->item(0)->nodeValue,
-                'replacement'   => $rule->getElementsByTagName('replacement')->item(0)->nodeValue,
-                'published'     => (($rule->getElementsByTagName('published')->item(0)->nodeValue === 'true') ? '1' : ''),
+                'pid'                   => $themeId,
+                'sorting'               => $sortIndex,
+                'type'                  => $rule->getElementsByTagName('type')->item(0)->nodeValue,
+                'selector'              => $rule->getElementsByTagName('selector')->item(0)->nodeValue,
+                'enable_replace'        => (($rule->getElementsByTagName('enable_replace')->item(0)->nodeValue === 'true') ? '1' : ''),
+                'replace_directives'    => $rule->getElementsByTagName('replace_directives')->item(0)->nodeValue,
+                'enable_add'            => (($rule->getElementsByTagName('enable_add')->item(0)->nodeValue === 'true') ? '1' : ''),
+                'add_directives'        => $rule->getElementsByTagName('add_directives')->item(0)->nodeValue,
+                'published'             => (($rule->getElementsByTagName('published')->item(0)->nodeValue === 'true') ? '1' : ''),
             );
 
             $sortIndex += 128;

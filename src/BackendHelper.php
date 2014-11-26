@@ -106,6 +106,7 @@ class BackendHelper
          */
         foreach ($rules as $rule) {
             $rule->updateXPathExpression();
+            $rule->updateDirectives();
             $rule->save();
         }
     }

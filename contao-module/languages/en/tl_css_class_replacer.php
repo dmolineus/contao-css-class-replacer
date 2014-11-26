@@ -3,10 +3,13 @@
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_css_class_replacer']['type']        = array('Selector Type', 'Choose whether you want to define a selector rule using a CSS selector or an XPath expression.');
-$GLOBALS['TL_LANG']['tl_css_class_replacer']['selector']    = array('Selector', 'Enter a selector to fetch the elements you want to modify.');
-$GLOBALS['TL_LANG']['tl_css_class_replacer']['replacement'] = array('Replacement', 'Enter the CSS class you would like to have. You can use the tokens ##all## for all existing CSS classes and each of them by index: ##class_0##, ##class_1## etc.');
-$GLOBALS['TL_LANG']['tl_css_class_replacer']['published']   = array('Publish rule', 'Apply the rule for this theme.');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['type']                = array('Selector Type', 'Choose whether you want to define a selector rule using a CSS selector or an XPath expression.');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['selector']            = array('Selector', 'Enter a selector to fetch the elements you want to modify.');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['enable_replace']      = array('Enable replacement directives', 'Activate this to enable replacement directives.');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['enable_add']          = array('Enable add directives', 'Activate this to enable add directives.');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['replace_directives']  = array('Replace directives', 'Use this to replace certain classes with others. If you leave the replacement empty, the original simply gets deleted. You can use regular expressions by prefixing the search key with "r:".');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['add_directives']      = array('Add directives', 'Enter the CSS classes you would like to add to the class value.');
+$GLOBALS['TL_LANG']['tl_css_class_replacer']['published']           = array('Publish rule', 'Apply the rule for this theme.');
 
 /**
  * Buttons
