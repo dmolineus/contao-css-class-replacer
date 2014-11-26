@@ -5,7 +5,7 @@ namespace Toflar\Contao\CssClassReplacer;
 
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class Listener
+class Listener extends \Controller
 {
     /**
      * @var \DOMDocument
@@ -26,6 +26,9 @@ class Listener
 
         $stopWatch = new Stopwatch();
         $stopWatch->start('css_class_replacer');
+
+        // Replace insert tags first because DOMDocument will encode them
+        $buffer = $this->replaceInsertTags($buffer);
 
         $this->doc = new \DOMDocument();
         $this->doc->strictErrorChecking = false;
