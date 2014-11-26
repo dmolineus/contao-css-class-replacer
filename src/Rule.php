@@ -53,12 +53,12 @@ class Rule extends \Model
 
 
     /**
-     * Find by currently active theme
+     * Find by active theme
      *
      * @param array
      * @return static
      */
-    public static function findPublishedByCurrentlyActiveTheme(array $arrOptions=array())
+    public static function findPublishedByActiveTheme(array $arrOptions=array())
     {
         global $objPage;
 
