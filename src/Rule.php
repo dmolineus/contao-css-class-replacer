@@ -48,6 +48,10 @@ class Rule extends \Model
             $arrColumns[] = "$t.published=1";
         }
 
+        if (!isset($arrOptions['order'])) {
+            $arrOptions['order'] = 'sorting';
+        }
+
         return static::findBy($arrColumns, $id, $arrOptions);
     }
 
