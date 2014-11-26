@@ -3,6 +3,8 @@
 namespace Toflar\Contao\CssClassReplacer;
 
 
+use Model\Collection;
+
 class BackendHelper
 {
     /**
@@ -75,5 +77,36 @@ class BackendHelper
             $row['selector'],
             $GLOBALS['TL_LANG']['tl_css_class_replacer']['type'][$row['type']]
         );
+    }
+
+    /**
+     * Called by the onsubmit_callback of tl_css_class_replacer
+     * Updates data on save
+     *
+     * @param \DataContainer
+     */
+    public function onSubmitCallback(\DataContainer $dc)
+    {
+        $rule = Rule::findByPk($dc->id);
+        $rules = new Collection(array($rule), Rule::getTable());
+        $this->updateCacheableValues($rules);
+    }
+
+
+    /**
+     * Generate and store cacheable values so they don't need to be generated
+     * on the fly in the front end all the time
+     *
+     * @param \Model\Collection $rules Rule collection
+     */
+    public function updateCacheableValues(Collection $rules)
+    {
+        /**
+         * @var $rule Rule
+         */
+        foreach ($rules as $rule) {
+            $rule->updateXPathExpression();
+            $rule->save();
+        }
     }
 } 

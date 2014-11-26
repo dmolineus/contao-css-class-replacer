@@ -12,6 +12,9 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
         'ptable'                      => 'tl_theme',
         'dataContainer'               => 'Table',
         'enableVersioning'            => true,
+        'onsubmit_callback'           => array(
+            array('Toflar\Contao\CssClassReplacer\BackendHelper', 'onSubmitCallback')
+        ),
         'sql' => array
         (
             'keys' => array
@@ -179,6 +182,10 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
             'inputType'               => 'checkbox',
             'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'clr'),
             'sql'                     => "char(1) NOT NULL default ''"
-        )
+        ),
+        'xpath_expression' => array
+        (
+            'sql'                     => "text NULL"
+        ),
     )
 );

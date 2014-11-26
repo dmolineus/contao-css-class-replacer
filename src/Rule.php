@@ -20,15 +20,19 @@ class Rule extends \Model
      */
     public function getXPathExpr()
     {
-        // @todo could be stored in the database instead of being generated on the fly
-        // however we'd need an option in the maintenance section of Contao to
-        // update them, as if the Symfony component is updated, possible bugs will
-        // not be fixed in the persisted xpath expression automatically
-        if ($this->type === 'css') {
-            return CssSelector::toXPath($this->selector);
-        }
+        return $this->xpath_expression;
+    }
 
-        return $this->selector;
+    /**
+     * Create and update XPath expression
+     */
+    public function updateXPathExpression()
+    {
+        if ($this->type === 'css') {
+            $this->xpath_expression = CssSelector::toXPath($this->selector);
+        } else {
+            $this->xpath_expression = $this->selector;
+        }
     }
 
 
@@ -54,7 +58,6 @@ class Rule extends \Model
 
         return static::findBy($arrColumns, $id, $arrOptions);
     }
-
 
     /**
      * Find by active theme
