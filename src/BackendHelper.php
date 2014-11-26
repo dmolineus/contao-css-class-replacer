@@ -71,6 +71,9 @@ class BackendHelper
      */
     public function generateRow($row)
     {
-        return $row['selector'] . ' <span class="tl_gray">[' . $row['type'] . ']</span>';
+        return sprintf('%s <span class="tl_gray">[%s]</span>',
+            $row['selector'],
+            $GLOBALS['TL_LANG']['tl_css_class_replacer']['type'][$row['type']]
+        );
     }
 } 
