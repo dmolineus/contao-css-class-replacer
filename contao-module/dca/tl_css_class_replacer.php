@@ -138,9 +138,10 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'select',
+            'default'                 => 'css',
             'options'                 => array('css', 'xpath'),
             'reference'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['type'],
-            'eval'                    => array('mandatory'=>true, 'includeBlankOption'=>true, 'tl_class'=>'clr'),
+            'eval'                    => array('mandatory'=>true, 'tl_class'=>'clr'),
             'sql'                     => "varchar(8) NOT NULL default ''"
         ),
         'selector' => array
