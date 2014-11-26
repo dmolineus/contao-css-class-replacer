@@ -3,6 +3,8 @@
 namespace Toflar\Contao\CssClassReplacer;
 
 
+use Symfony\Component\Stopwatch\Stopwatch;
+
 class Listener
 {
     /**
@@ -22,7 +24,8 @@ class Listener
             return $buffer;
         }
 
-        $start = microtime(true);
+        $stopWatch = new Stopwatch();
+        $stopWatch->start('css_class_replacer');
 
         $this->doc = new \DOMDocument();
         $this->doc->strictErrorChecking = false;
@@ -43,7 +46,7 @@ class Listener
             } catch (\Exception $e) {}
         }
 
-        $this->addTimeToDebugBar($start);
+        $this->addTimeToDebugBar($stopWatch);
 
         return $this->doc->saveHTML();
     }
@@ -91,15 +94,14 @@ class Listener
         return $tokens;
     }
 
-    private function addTimeToDebugBar($start)
+    private function addTimeToDebugBar(Stopwatch $stopWatch)
     {
         if (!$GLOBALS['TL_CONFIG']['debugMode']) {
             return;
         }
 
-        $elapsed = (microtime(true) - $start);
-        $ms = \System::getFormattedNumber(($elapsed * 1000), 0);
+        $stopEvent = $stopWatch->stop('css_class_replacer');
 
-        $GLOBALS['TL_DEBUG']['css-class-replacer'] = 'CSS replacements time: ' . $ms . ' ms';
+        $GLOBALS['TL_DEBUG']['css-class-replacer'] = 'CSS replacements time: ' . $stopEvent->getDuration() . ' ms';
     }
 }
