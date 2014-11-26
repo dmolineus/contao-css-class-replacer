@@ -30,9 +30,16 @@ class Listener extends \Controller
         // Replace insert tags first because DOMDocument will encode them
         $buffer = $this->replaceInsertTags($buffer);
 
+        // Tell the parser which charset being used.
+        $buffer = '<?xml encoding="' . $GLOBALS['TL_CONFIG']['characterSet'] . '" ?>' . $buffer;
+
         $this->doc = new \DOMDocument();
         $this->doc->strictErrorChecking = false;
         @$this->doc->loadHTML($buffer);
+
+        // Set output encoding
+        $this->doc->encoding = $GLOBALS['TL_CONFIG']['characterSet'];
+
         $xPath = new \DOMXPath($this->doc);
 
         /**
