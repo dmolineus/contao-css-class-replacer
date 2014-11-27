@@ -30,7 +30,7 @@ class Listener extends \Controller
         // Replace insert tags first because DOMDocument will encode them
         $buffer = $this->replaceInsertTags($buffer);
 
-        $this->doc = new \DOMDocument();
+        $this->doc = new \DOMDocument('1.1', 'UTF-8');
         $this->doc->strictErrorChecking = false;
         @$this->doc->loadHTML($buffer);
         $xPath = new \DOMXPath($this->doc);
