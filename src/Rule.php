@@ -111,7 +111,7 @@ class Rule extends \Model
         }
 
         // Clean output
-        return trim(preg_replace('!\s+!',  ' ', $class));
+        return trim(preg_replace('/\s+/',  ' ', $class));
     }
 
     /**
