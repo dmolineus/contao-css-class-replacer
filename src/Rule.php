@@ -92,21 +92,21 @@ class Rule extends \Model
         }
 
         // Apply simple replacement directives
-        if ($this->directivesCache['replace_search']) {
+        if (!empty($this->directivesCache['replace_search'])) {
             $class = str_replace($this->directivesCache['replace_search'],
                 $this->directivesCache['replace_values'],
                 $class);
         }
 
         // Apply rgxp replacement directives
-        if ($this->directivesCache['rgxp_replace_search']) {
+        if (!empty($this->directivesCache['rgxp_replace_search'])) {
             $class = preg_replace($this->directivesCache['rgxp_replace_search'],
                 $this->directivesCache['rgxp_replace_values'],
                 $class);
         }
 
         // Apply add directives
-        if ($this->directivesCache['add']) {
+        if (!empty($this->directivesCache['add'])) {
             $class .= ' ' . implode(' ', $this->directivesCache['add']);
         }
 
