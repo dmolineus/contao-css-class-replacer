@@ -63,8 +63,8 @@ class Listener extends \Controller
         if ($classNode) {
             $classNode->nodeValue = $rule->applyRulesOnClass($classNode->nodeValue);
         } else {
-            // Otherwise append
-            $node->setAttribute('class', $rule->applyRulesOnClass($classNode->nodeValue));
+            // Otherwise add
+            $node->setAttribute('class', $rule->applyRulesOnClass(''));
         }
     }
 
