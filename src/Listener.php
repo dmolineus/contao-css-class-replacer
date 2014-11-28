@@ -27,9 +27,6 @@ class Listener extends \Controller
         $stopWatch = new Stopwatch();
         $stopWatch->start('css_class_replacer');
 
-        // Replace insert tags first because DOMDocument will encode them
-        $buffer = $this->replaceInsertTags($buffer);
-
         $this->doc = new \DOMDocument('1.1', $GLOBALS['TL_CONFIG']['characterSet']);
         $this->doc->strictErrorChecking = false;
         $this->loadHtml($buffer);
