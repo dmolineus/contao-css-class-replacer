@@ -30,16 +30,9 @@ class Listener extends \Controller
         // Replace insert tags first because DOMDocument will encode them
         $buffer = $this->replaceInsertTags($buffer);
 
-        // Tell the parser which charset being used.
-        $encoding = '<?xml encoding="' . $GLOBALS['TL_CONFIG']['characterSet'] . '" ?>';
-        $buffer   = $encoding . $buffer;
-
-        $this->doc = new \DOMDocument();
+        $this->doc = new \DOMDocument('1.1', $GLOBALS['TL_CONFIG']['characterSet']);
         $this->doc->strictErrorChecking = false;
-        @$this->doc->loadHTML($buffer);
-
-        // Set output encoding
-        $this->doc->encoding = $GLOBALS['TL_CONFIG']['characterSet'];
+        $this->loadHtml($buffer);
 
         $xPath = new \DOMXPath($this->doc);
 
@@ -59,9 +52,7 @@ class Listener extends \Controller
 
         $this->addTimeToDebugBar($stopWatch);
 
-        // Remove xml charset definition again
-        $buffer = $this->doc->saveHTML();
-        return preg_replace('/' . preg_quote($encoding, '/') . '/', '', $buffer, 1);
+        return $this->doc->saveHTML();
     }
 
     private function modifyNode(\DOMElement $node, Rule $rule)
@@ -116,5 +107,25 @@ class Listener extends \Controller
         $stopEvent = $stopWatch->stop('css_class_replacer');
 
         $GLOBALS['TL_DEBUG']['css-class-replacer'] = 'CSS replacements time: ' . $stopEvent->getDuration() . ' ms';
+    }
+
+    /**
+     * Load html from buffer and take care of
+     *
+     * @param $buffer
+     */
+    private function loadHtml($buffer)
+    {
+        // Tell the parser which charset being used.
+        $encoding = '<?xml encoding="' . $GLOBALS['TL_CONFIG']['characterSet'] . '" ?>';
+        $buffer   = $encoding . $buffer;
+
+        @$this->doc->loadHTML($buffer);
+
+        foreach ($this->doc->childNodes as $item) {
+            if ($item->nodeType == XML_PI_NODE) {
+                $this->doc->removeChild($item);
+            }
+        }
     }
 }
