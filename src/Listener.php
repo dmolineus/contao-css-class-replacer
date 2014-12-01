@@ -27,12 +27,10 @@ class Listener extends \Controller
         $stopWatch = new Stopwatch();
         $stopWatch->start('css_class_replacer');
 
-        // Replace insert tags first because DOMDocument will encode them
-        $buffer = $this->replaceInsertTags($buffer);
-
-        $this->doc = new \DOMDocument('1.1', 'UTF-8');
+        $this->doc = new \DOMDocument('1.1', $GLOBALS['TL_CONFIG']['characterSet']);
         $this->doc->strictErrorChecking = false;
-        @$this->doc->loadHTML($buffer);
+        $this->loadHtml($buffer);
+
         $xPath = new \DOMXPath($this->doc);
 
         /**
@@ -77,5 +75,25 @@ class Listener extends \Controller
         $stopEvent = $stopWatch->stop('css_class_replacer');
 
         $GLOBALS['TL_DEBUG']['css-class-replacer'] = 'CSS replacements time: ' . $stopEvent->getDuration() . ' ms';
+    }
+
+    /**
+     * Load html from buffer and take care of correct encoding
+     *
+     * @param $buffer
+     */
+    private function loadHtml($buffer)
+    {
+        // Tell the parser which charset being used
+        $encoding = '<?xml encoding="' . $GLOBALS['TL_CONFIG']['characterSet'] . '" ?>';
+        $buffer   = $encoding . $buffer;
+
+        @$this->doc->loadHTML($buffer);
+
+        foreach ($this->doc->childNodes as $item) {
+            if ($item->nodeType == XML_PI_NODE) {
+                $this->doc->removeChild($item);
+            }
+        }
     }
 }
