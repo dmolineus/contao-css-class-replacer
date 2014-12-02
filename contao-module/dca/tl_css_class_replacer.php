@@ -12,6 +12,9 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
         'ptable'                      => 'tl_theme',
         'dataContainer'               => 'Table',
         'enableVersioning'            => true,
+        'onsubmit_callback'           => array(
+            array('Toflar\Contao\CssClassReplacer\BackendHelper', 'onSubmitCallback')
+        ),
         'sql' => array
         (
             'keys' => array
@@ -27,15 +30,15 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
     (
         'sorting' => array
         (
-            'mode'                    => 1,
-            'fields'                  => array('selector'),
-            'flag'                    => 1,
-            'panelLayout'             => 'filter;search,limit'
+            'mode'                    => 4,
+            'fields'                  => array('sorting'),
+            'headerFields'            => array('name', 'author'),
+            'panelLayout'             => 'filter,sort;search,limit',
+            'child_record_callback'   => array('Toflar\Contao\CssClassReplacer\BackendHelper', 'generateRow')
         ),
         'label' => array
         (
             'fields'                  => array('selector'),
-            //'label_callback'          => array('x', 'x')
         ),
         'global_operations' => array
         (
@@ -45,6 +48,18 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
                 'href'                => 'act=select',
                 'class'               => 'header_edit_all',
                 'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
+            ),
+            'import' => array
+            (
+                'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['import'],
+                'href'                => 'key=importCssClassReplacerRules',
+                'icon'                => 'system/modules/css-class-replacer/assets/import.png'
+            ),
+            'export' => array
+            (
+                'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['export'],
+                'href'                => 'key=exportCssClassReplacerRules',
+                'icon'                => 'system/modules/css-class-replacer/assets/export.png'
             )
         ),
         'operations' => array
@@ -61,20 +76,27 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
                 'href'                => 'act=copy',
                 'icon'                => 'copy.gif'
             ),
+            'cut' => array
+            (
+                'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['cut'],
+                'href'                => 'act=paste&amp;mode=cut',
+                'icon'                => 'cut.gif',
+                'attributes'          => 'onclick="Backend.getScrollOffset()"'
+            ),
             'delete' => array
             (
                 'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['delete'],
                 'href'                => 'act=delete',
                 'icon'                => 'delete.gif',
                 'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"'
-            ),/*
+            ),
             'toggle' => array
             (
                 'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['toggle'],
                 'icon'                => 'visible.gif',
                 'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-                'button_callback'     => array('x', 'x')
-            ),*/
+                'button_callback'     => array('Toflar\Contao\CssClassReplacer\BackendHelper', 'toggleIcon')
+            ),
             'show' => array
             (
                 'label'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['show'],
@@ -87,7 +109,15 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
     // Palettes
     'palettes' => array
     (
-        'default'                     => '{title_legend},type,selector,replacement',
+        '__selector__'                => array('enable_replace', 'enable_add'),
+        'default'                     => '{title_legend},type,selector,enable_replace,enable_add,published',
+    ),
+
+    // Sub palettes
+    'subpalettes' => array
+    (
+        'enable_replace'              => 'replace_directives',
+        'enable_add'                  => 'add_directives',
     ),
 
     // Fields
@@ -105,15 +135,21 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
         (
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ),
+        'sorting' => array
+        (
+            'sorting'                 => true,
+            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        ),
         'type' => array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['type'],
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'select',
+            'default'                 => 'css',
             'options'                 => array('css', 'xpath'),
             'reference'               => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['type'],
-            'eval'                    => array('mandatory'=>true, 'includeBlankOption'=>true, 'tl_class'=>'clr'),
+            'eval'                    => array('mandatory'=>true, 'tl_class'=>'clr'),
             'sql'                     => "varchar(8) NOT NULL default ''"
         ),
         'selector' => array
@@ -121,27 +157,75 @@ $GLOBALS['TL_DCA']['tl_css_class_replacer'] = array
             'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['selector'],
             'exclude'                 => true,
             'search'                  => true,
+            'sorting'                 => true,
+            'flag'                    => 1,
             'inputType'               => 'textarea',
             'eval'                    => array('mandatory'=>true, 'decodeEntities'=>true, 'tl_class'=>'clr'),
             'sql'                     => "text NULL",
             'save_callback'           => array(
                 function($value, $dc) {
-                    if (($rule = \Toflar\Contao\CssClassReplacer\Rule::findByPk($dc->id)) !== null) {
-                        $rule->getXPathExpr();
+                    if ($dc->activeRecord->type === 'css') {
+                        // throws an exception if not supported
+                        \Symfony\Component\CssSelector\CssSelector::toXPath($value);
                     }
 
                     return $value;
                 }
             )
         ),
-        'replacement' => array
+        'enable_replace' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['replacement'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['enable_replace'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'replace_directives' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['replace_directives'],
             'exclude'                 => true,
             'search'                  => true,
-            'inputType'               => 'textarea',
-            'eval'                    => array('mandatory'=>true, 'decodeEntities'=>true, 'tl_class'=>'clr'),
+            'inputType'               => 'keyValueWizard',
+            'eval'                    => array('mandatory'=>true, 'decodeEntities'=>true, 'tl_class'=>'clr', 'style'=>'width:300px;'),
+            'sql'                     => "blob NULL"
+        ),
+        'enable_add' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['enable_add'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'add_directives' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['add_directives'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'listWizard',
+            'eval'                    => array('mandatory'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "blob NULL"
+        ),
+        'published' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_css_class_replacer']['published'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'xpath_expression' => array
+        (
             'sql'                     => "text NULL"
-        )
+        ),
+        'directives' => array
+        (
+            'sql'                     => "text NULL"
+        ),
     )
 );

@@ -9,3 +9,8 @@ Thumbs.db
 .build/
 .idea/
 nbproject/
+
+# Composer
+/vendor/
+# Ignored on purpose
+composer.lock
