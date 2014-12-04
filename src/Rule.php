@@ -149,6 +149,10 @@ class Rule extends \Model
     {
         global $objPage;
 
+        if ($objPage === null) {
+            return null;
+        }
+
         if (($layout = \LayoutModel::findByPk($objPage->layout)) === null) {
             return null;
         }
