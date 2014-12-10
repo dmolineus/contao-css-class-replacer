@@ -91,18 +91,20 @@ class Rule extends \Model
             $this->directivesCache = json_decode($this->directives, true);
         }
 
-        // Apply simple replacement directives
-        if (!empty($this->directivesCache['replace_search'])) {
-            $class = str_replace($this->directivesCache['replace_search'],
-                $this->directivesCache['replace_values'],
-                $class);
-        }
+        if ($class !== '') {
+            // Apply simple replacement directives
+            if (!empty($this->directivesCache['replace_search'])) {
+                $class = str_replace($this->directivesCache['replace_search'],
+                    $this->directivesCache['replace_values'],
+                    $class);
+            }
 
-        // Apply rgxp replacement directives
-        if (!empty($this->directivesCache['rgxp_replace_search'])) {
-            $class = preg_replace($this->directivesCache['rgxp_replace_search'],
-                $this->directivesCache['rgxp_replace_values'],
-                $class);
+            // Apply rgxp replacement directives
+            if (!empty($this->directivesCache['rgxp_replace_search'])) {
+                $class = preg_replace($this->directivesCache['rgxp_replace_search'],
+                    $this->directivesCache['rgxp_replace_values'],
+                    $class);
+            }
         }
 
         // Apply add directives
@@ -146,6 +148,10 @@ class Rule extends \Model
     public static function findPublishedByActiveTheme(array $arrOptions=array())
     {
         global $objPage;
+
+        if ($objPage === null) {
+            return null;
+        }
 
         if (($layout = \LayoutModel::findByPk($objPage->layout)) === null) {
             return null;
