@@ -14,12 +14,6 @@ class RuleModel extends \Model
     static $strTable = 'tl_css_class_replacer';
 
     /**
-     * Directives cache
-     * @var array|null
-     */
-    private $directivesCache;
-
-    /**
      * Cached rule.
      * 
      * @var RuleInterface
@@ -156,7 +150,7 @@ class RuleModel extends \Model
     private function createRule()
     {
         // Set local cache copy for PHP 5.3 compatibility
-        $cache = $this->directivesCache;
+        $cache = json_decode($this->directives, true);
         $rule  = new ClassAttributeRule($this->xpath_expression);
 
         // Apply simple replacement directives
