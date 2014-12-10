@@ -9,6 +9,12 @@
             "name":"Yanick Witschi",
             "email":"yanick.witschi@terminal42.ch",
             "homepage":"http://terminal42.ch"
+        },
+        {
+            "name":"David Molineus",
+            "email":"mail@netzmacht.de",
+            "homepage":"http://www.netzmacht.de",
+            "role":"Developer"
         }
     ],
     "require":{
