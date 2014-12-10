@@ -8,11 +8,6 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class Listener extends \Controller
 {
     /**
-     * @var \DOMDocument
-     */
-    private $doc;
-
-    /**
      * Replace CSS classes
      *
      * @param $buffer
@@ -39,26 +34,16 @@ class Listener extends \Controller
         $stopWatch = new Stopwatch();
         $stopWatch->start('css_class_replacer');
 
-        $this->doc = new \DOMDocument('1.1', $GLOBALS['TL_CONFIG']['characterSet']);
-        $this->doc->strictErrorChecking = false;
-        $this->loadHtml($buffer);
+        $manipulator = new DomManipulator($GLOBALS['TL_CONFIG']['characterSet'], $rules);
+        $manipulator->loadHtml($buffer, $GLOBALS['TL_CONFIG']['characterSet']);
 
-        $xPath = new \DOMXPath($this->doc);
-
-        foreach ($rules as $rule) {
-            try {
-                $nodeList = $xPath->query($rule->getXPathExpr());
-
-                foreach ($nodeList as $node) {
-                    $rule->apply($node);
-                }
-
-            } catch (\Exception $e) {}
-        }
+        try {
+            $buffer = $manipulator->manipulate();
+        } catch (\Exception $e) {}
 
         $this->addTimeToDebugBar($stopWatch);
 
-        return $this->doc->saveHTML();
+        return $buffer;
     }
 
     private function addTimeToDebugBar(Stopwatch $stopWatch)
@@ -70,26 +55,6 @@ class Listener extends \Controller
         $stopEvent = $stopWatch->stop('css_class_replacer');
 
         $GLOBALS['TL_DEBUG']['css-class-replacer'] = 'CSS replacements time: ' . $stopEvent->getDuration() . ' ms';
-    }
-
-    /**
-     * Load html from buffer and take care of correct encoding
-     *
-     * @param $buffer
-     */
-    private function loadHtml($buffer)
-    {
-        // Tell the parser which charset being used
-        $encoding = '<?xml encoding="' . $GLOBALS['TL_CONFIG']['characterSet'] . '" ?>';
-        $buffer   = $encoding . $buffer;
-
-        @$this->doc->loadHTML($buffer);
-
-        foreach ($this->doc->childNodes as $item) {
-            if ($item->nodeType == XML_PI_NODE) {
-                $this->doc->removeChild($item);
-            }
-        }
     }
 
     /**
