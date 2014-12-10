@@ -12,6 +12,9 @@ class Listener extends \Controller
      *
      * @param $buffer
      * @param $templateName
+     *
+     * @throws \Exception If debug mode is enabled and something went wrong.
+     *
      * @return string
      */
     public function replaceCssClasses($buffer, $templateName)
@@ -39,7 +42,11 @@ class Listener extends \Controller
 
         try {
             $buffer = $manipulator->manipulate();
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            if ($GLOBALS['TL_CONFIG']['debugMode']) {
+                throw $e;
+            }
+        }
 
         $this->addTimeToDebugBar($stopWatch);
 
