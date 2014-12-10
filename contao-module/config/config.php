@@ -24,7 +24,7 @@ $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array(
 /**
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_css_class_replacer'] = 'Toflar\Contao\CssClassReplacer\Rule';
+$GLOBALS['TL_MODELS']['tl_css_class_replacer'] = 'Toflar\Contao\CssClassReplacer\RuleModel';
 
 /**
  * Maintenance
