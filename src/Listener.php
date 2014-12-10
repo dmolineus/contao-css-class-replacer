@@ -93,10 +93,9 @@ class Listener extends \Controller
         if (($collection = RuleModel::findPublishedByActiveTheme()) !== null) {
             /** @var RuleModel $model */
             foreach ($collection as $model) {
-                $rules[] = $model;
+                $rules[] = $model->getRule();
             }
         }
-
 
         return $rules;
     }
