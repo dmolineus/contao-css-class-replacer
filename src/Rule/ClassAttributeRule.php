@@ -39,6 +39,7 @@ class ClassAttributeRule extends AbstractRule
             $cssClass = $filter($cssClass);
         }
 
-        return $cssClass;
+        // Clean output
+        return trim(preg_replace('/\s+/',  ' ', $cssClass));
     }
 }
