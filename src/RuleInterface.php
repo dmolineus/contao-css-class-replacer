@@ -18,7 +18,7 @@ interface RuleInterface
      *
      * @return $this
      */
-    public function clearFilter();
+    public function clearFilters();
 
     /**
      * Get all filters.

@@ -43,7 +43,7 @@ abstract class AbstractRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function clearFilter()
+    public function clearFilters()
     {
         $this->filters = array();
 
