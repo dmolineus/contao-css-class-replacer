@@ -19,7 +19,7 @@ class Listener extends \Controller
      */
     public function replaceCssClasses($buffer, $templateName)
     {
-        $rules = $this->loadRules();
+        $rules = $this->loadRules($templateName);
         if (empty($rules)) {
             return $buffer;
         }
@@ -67,9 +67,11 @@ class Listener extends \Controller
     /**
      * Get Rules.
      *
+     * @param string $templateName Template name.
+     *
      * @return RuleInterface[]
      */
-    private function loadRules()
+    private function loadRules($templateName)
     {
         $rules = array();
 
@@ -77,6 +79,13 @@ class Listener extends \Controller
             /** @var RuleModel $model */
             foreach ($collection as $model) {
                 $rules[] = $model->getRule();
+            }
+        }
+
+        if (isset($GLOBALS['TL_HOOKS']['loadCssClassReplacerRules'])) {
+            foreach ((array) $GLOBALS['TL_HOOKS']['loadCssClassReplacerRules'] as $callback) {
+                $ruleLoader = $this->importStatic($callback, 'cssClassRuleLoader', true);
+                $rules      = $ruleLoader->$callback[1]($rules, $templateName);
             }
         }
 
