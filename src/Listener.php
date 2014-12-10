@@ -20,7 +20,7 @@ class Listener extends \Controller
      */
     public function replaceCssClasses($buffer)
     {
-        if (($rules = Rule::findPublishedByActiveTheme()) === null) {
+        if (($rules = RuleModel::findPublishedByActiveTheme()) === null) {
             return $buffer;
         }
 
@@ -34,7 +34,7 @@ class Listener extends \Controller
         $xPath = new \DOMXPath($this->doc);
 
         /**
-         * @var $rule \Toflar\Contao\CssClassReplacer\Rule
+         * @var $rule \Toflar\Contao\CssClassReplacer\RuleModel
          */
         foreach ($rules as $rule) {
             try {
@@ -52,7 +52,7 @@ class Listener extends \Controller
         return $this->doc->saveHTML();
     }
 
-    private function modifyNode(\DOMElement $node, Rule $rule)
+    private function modifyNode(\DOMElement $node, RuleModel $rule)
     {
         $attr = $node->attributes;
         $classNode = $attr->getNamedItem('class');

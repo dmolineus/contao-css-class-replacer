@@ -3,7 +3,7 @@
 namespace Toflar\Contao\CssClassReplacer\Maintenance;
 
 use Toflar\Contao\CssClassReplacer\BackendHelper;
-use Toflar\Contao\CssClassReplacer\Rule;
+use Toflar\Contao\CssClassReplacer\RuleModel;
 
 class RuleUpdate implements \executable
 {
@@ -33,7 +33,7 @@ class RuleUpdate implements \executable
         $template->submit = specialchars($GLOBALS['TL_LANG']['tl_maintenance']['css-class-replacer-submit']);
 
         if ($this->isActive()) {
-            $rules = Rule::findAll();
+            $rules = RuleModel::findAll();
             $helper = new BackendHelper();
             $helper->updateCacheableValues($rules);
 

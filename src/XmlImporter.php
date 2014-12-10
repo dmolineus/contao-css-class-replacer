@@ -34,7 +34,7 @@ class XmlImporter
             }
 
             // Let's be nice and update the cache automatically
-            $rules = Rule::findAll();
+            $rules = RuleModel::findAll();
             $helper = new BackendHelper();
             $helper->updateCacheableValues($rules);
         }
@@ -82,7 +82,7 @@ class XmlImporter
 
         $rules     = $doc->getElementsByTagName('rule');
         $sortIndex = 0;
-        $lastRule  = Rule::findBy('pid', $themeId, array('order' => 'sorting DESC', 'limit' => 1));
+        $lastRule  = RuleModel::findBy('pid', $themeId, array('order' => 'sorting DESC', 'limit' => 1));
 
         if ($lastRule) {
             $sortIndex = $lastRule->sorting + 128;
