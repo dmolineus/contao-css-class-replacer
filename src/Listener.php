@@ -38,7 +38,7 @@ class Listener extends \Controller
         $stopWatch->start('css_class_replacer');
 
         $manipulator = new DomManipulator($GLOBALS['TL_CONFIG']['characterSet'], $rules);
-        $manipulator->loadHtml($buffer, $GLOBALS['TL_CONFIG']['characterSet']);
+        $manipulator->loadHtml($buffer);
 
         try {
             $buffer = $manipulator->manipulate();
