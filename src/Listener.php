@@ -20,7 +20,8 @@ class Listener extends \Controller
      */
     public function replaceCssClasses($buffer)
     {
-        if (($rules = RuleModel::findPublishedByActiveTheme()) === null) {
+        $rules = $this->loadRules();
+        if (empty($rules)) {
             return $buffer;
         }
 
@@ -33,12 +34,8 @@ class Listener extends \Controller
 
         $xPath = new \DOMXPath($this->doc);
 
-        /**
-         * @var $model \Toflar\Contao\CssClassReplacer\RuleModel
-         */
-        foreach ($rules as $model) {
+        foreach ($rules as $rule) {
             try {
-                $rule     = $model->getRule();
                 $nodeList = $xPath->query($rule->getXPathExpr());
 
                 foreach ($nodeList as $node) {
@@ -82,5 +79,25 @@ class Listener extends \Controller
                 $this->doc->removeChild($item);
             }
         }
+    }
+
+    /**
+     * Get Rules.
+     *
+     * @return RuleInterface[]
+     */
+    private function loadRules()
+    {
+        $rules = array();
+
+        if (($collection = RuleModel::findPublishedByActiveTheme()) !== null) {
+            /** @var RuleModel $model */
+            foreach ($collection as $model) {
+                $rules[] = $model;
+            }
+        }
+
+
+        return $rules;
     }
 }
