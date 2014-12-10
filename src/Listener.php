@@ -38,16 +38,10 @@ class Listener extends \Controller
         $stopWatch->start('css_class_replacer');
 
         $manipulator = new DomManipulator($GLOBALS['TL_CONFIG']['characterSet'], $rules);
+        $manipulator->setSilentMode(!$GLOBALS['TL_CONFIG']['debugMode']);
         $manipulator->loadHtml($buffer);
 
-        try {
-            $buffer = $manipulator->manipulate();
-        } catch (\Exception $e) {
-            if ($GLOBALS['TL_CONFIG']['debugMode']) {
-                throw $e;
-            }
-        }
-
+        $buffer = $manipulator->manipulate();
         $this->addTimeToDebugBar($stopWatch);
 
         return $buffer;

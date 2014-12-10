@@ -19,14 +19,24 @@ class DomManipulator
     private $document;
 
     /**
+     * Silent mode will ignore exceptions caused by broken rules.
+     *
+     * @var bool
+     */
+    private $silentMode;
+
+    /**
      * Construct.
      *
-     * @param string          $encoding Charset encoding.
-     * @param RuleInterface[] $rules    Rules.
+     * @param string          $encoding   Charset encoding.
+     * @param RuleInterface[] $rules      Rules.
+     * @param bool            $silentMode Set silent mode.
      */
-    public function __construct($encoding, array $rules = array())
+    public function __construct($encoding, array $rules = array(), $silentMode = false)
     {
-        $this->rules    = $rules;
+        $this->silentMode = $silentMode;
+        $this->rules      = $rules;
+
         $this->document = new \DOMDocument('1,1', $encoding);
         $this->document->strictErrorChecking = false;
     }
@@ -72,7 +82,33 @@ class DomManipulator
     }
 
     /**
+     * Check if manipulator is in silent mode.
+     *
+     * @return bool
+     */
+    public function isSilentMode()
+    {
+        return $this->silentMode;
+    }
+
+    /**
+     * Set silent mode.
+     *
+     * @param bool $silentMode Silent mode.
+     *
+     * @return $this
+     */
+    public function setSilentMode($silentMode)
+    {
+        $this->silentMode = $silentMode;
+
+        return $this;
+    }
+
+    /**
      * Manipulate document.
+     *
+     * @throws \Exception If a broken rule is executed and silent mode is not enabled.
      *
      * @return string
      */
@@ -81,10 +117,16 @@ class DomManipulator
         $xPath = new \DOMXPath($this->document);
 
         foreach ($this->rules as $rule) {
-            $nodeList = $xPath->query($rule->getXPathExpr());
+            try {
+                $nodeList = $xPath->query($rule->getXPathExpr());
 
-            foreach ($nodeList as $node) {
-                $rule->apply($node);
+                foreach ($nodeList as $node) {
+                    $rule->apply($node);
+                }
+            } catch (\Exception $e) {
+                if (!$this->silentMode) {
+                    throw $e;
+                }
             }
         }
 
