@@ -3,6 +3,7 @@
 namespace Toflar\Contao\CssClassReplacer;
 
 use Symfony\Component\CssSelector\CssSelector;
+use Toflar\Contao\CssClassReplacer\Rule\ClassAttributeRule;
 
 class RuleModel extends \Model
 {
@@ -17,6 +18,29 @@ class RuleModel extends \Model
      * @var array|null
      */
     private $directivesCache;
+
+    /**
+     * Cached rule.
+     * 
+     * @var RuleInterface
+     */
+    private $rule;
+
+    /**
+     * Get the rule.
+     *
+     * @param bool $forceRefresh Rule is cached. Force to refresh cache if some modal values has changed.
+     *
+     * @return RuleInterface
+     */
+    public function getRule($forceRefresh = false)
+    {
+        if (!$this->rule || $forceRefresh) {
+            $this->rule = $this->createRule();
+        }
+        
+        return $this->rule;
+    }
 
     /**
      * Get XPath expression
@@ -81,40 +105,6 @@ class RuleModel extends \Model
     }
 
     /**
-     * Apply replacement rules on given CSS class
-     *
-     * @param string
-     */
-    public function applyRulesOnClass($class)
-    {
-        if ($this->directivesCache === null) {
-            $this->directivesCache = json_decode($this->directives, true);
-        }
-
-        // Apply simple replacement directives
-        if (!empty($this->directivesCache['replace_search'])) {
-            $class = str_replace($this->directivesCache['replace_search'],
-                $this->directivesCache['replace_values'],
-                $class);
-        }
-
-        // Apply rgxp replacement directives
-        if (!empty($this->directivesCache['rgxp_replace_search'])) {
-            $class = preg_replace($this->directivesCache['rgxp_replace_search'],
-                $this->directivesCache['rgxp_replace_values'],
-                $class);
-        }
-
-        // Apply add directives
-        if (!empty($this->directivesCache['add'])) {
-            $class .= ' ' . implode(' ', $this->directivesCache['add']);
-        }
-
-        // Clean output
-        return trim(preg_replace('/\s+/',  ' ', $class));
-    }
-
-    /**
      * Find by theme id
      *
      * @param int
@@ -152,5 +142,56 @@ class RuleModel extends \Model
         }
 
         return static::findPublishedByThemeId($layout->pid, $arrOptions);
+    }
+
+    /**
+     * Create rule based on RuleModel.
+     *
+     * @return ClassAttributeRule
+     */
+    private function createRule()
+    {
+        // Set local cache copy for PHP 5.3 compatibility
+        $cache = $this->directivesCache;
+        $rule  = new ClassAttributeRule($this->xpath_expression);
+
+        // Apply simple replacement directives
+        if (!empty($cache['replace_search'])) {
+            $rule->addFilter(
+                function ($class) use ($cache) {
+                    return str_replace(
+                        $cache['replace_search'],
+                        $cache['replace_values'],
+                        $class
+                    );
+                }
+            );
+        }
+
+        // Apply rgxp replacement directives
+        if (!empty($cache['rgxp_replace_search'])) {
+            $rule->addFilter(
+                function ($class) use ($cache) {
+                    return preg_replace(
+                        $cache['rgxp_replace_search'],
+                        $cache['rgxp_replace_values'],
+                        $class
+                    );
+                }
+            );
+        }
+
+        // Apply rgxp replacement directives
+        if (!empty($cache['add'])) {
+            $rule->addFilter(
+                function ($class) use ($cache) {
+                    $class .= ' ' . implode(' ', $cache['add']);
+
+                    return $class;
+                }
+            );
+        }
+
+        return $rule;
     }
 }

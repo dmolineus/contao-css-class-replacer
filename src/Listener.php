@@ -34,14 +34,15 @@ class Listener extends \Controller
         $xPath = new \DOMXPath($this->doc);
 
         /**
-         * @var $rule \Toflar\Contao\CssClassReplacer\RuleModel
+         * @var $model \Toflar\Contao\CssClassReplacer\RuleModel
          */
-        foreach ($rules as $rule) {
+        foreach ($rules as $model) {
             try {
+                $rule     = $model->getRule();
                 $nodeList = $xPath->query($rule->getXPathExpr());
 
                 foreach ($nodeList as $node) {
-                    $this->modifyNode($node, $rule);
+                    $rule->apply($node);
                 }
 
             } catch (\Exception $e) {}
@@ -50,20 +51,6 @@ class Listener extends \Controller
         $this->addTimeToDebugBar($stopWatch);
 
         return $this->doc->saveHTML();
-    }
-
-    private function modifyNode(\DOMElement $node, RuleModel $rule)
-    {
-        $attr = $node->attributes;
-        $classNode = $attr->getNamedItem('class');
-
-        // Replace if it already exists
-        if ($classNode) {
-            $classNode->nodeValue = $rule->applyRulesOnClass($classNode->nodeValue);
-        } else {
-            // Otherwise add
-            $node->setAttribute('class', $rule->applyRulesOnClass(''));
-        }
     }
 
     private function addTimeToDebugBar(Stopwatch $stopWatch)
