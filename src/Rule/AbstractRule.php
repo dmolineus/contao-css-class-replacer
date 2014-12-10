@@ -21,6 +21,16 @@ abstract class AbstractRule implements RuleInterface
     private $xPathExpr;
 
     /**
+     * Construct.
+     *
+     * @param string $xPathExpr XPath expression.
+     */
+    public function __construct($xPathExpr = null)
+    {
+        $this->xPathExpr = $xPathExpr;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function addFilter($filter)
