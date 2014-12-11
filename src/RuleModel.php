@@ -4,19 +4,13 @@ namespace Toflar\Contao\CssClassReplacer;
 
 use Symfony\Component\CssSelector\CssSelector;
 
-class Rule extends \Model
+class RuleModel extends \Model
 {
     /**
      * Table name
      * @var string
      */
     static $strTable = 'tl_css_class_replacer';
-
-    /**
-     * Directives cache
-     * @var array|null
-     */
-    private $directivesCache;
 
     /**
      * Get XPath expression
@@ -81,39 +75,13 @@ class Rule extends \Model
     }
 
     /**
-     * Apply replacement rules on given CSS class
+     * Get directives
      *
      * @param string
      */
-    public function applyRulesOnClass($class)
+    public function getDirectives()
     {
-        if ($this->directivesCache === null) {
-            $this->directivesCache = json_decode($this->directives, true);
-        }
-
-        if ($class !== '') {
-            // Apply simple replacement directives
-            if (!empty($this->directivesCache['replace_search'])) {
-                $class = str_replace($this->directivesCache['replace_search'],
-                    $this->directivesCache['replace_values'],
-                    $class);
-            }
-
-            // Apply rgxp replacement directives
-            if (!empty($this->directivesCache['rgxp_replace_search'])) {
-                $class = preg_replace($this->directivesCache['rgxp_replace_search'],
-                    $this->directivesCache['rgxp_replace_values'],
-                    $class);
-            }
-        }
-
-        // Apply add directives
-        if (!empty($this->directivesCache['add'])) {
-            $class .= ' ' . implode(' ', $this->directivesCache['add']);
-        }
-
-        // Clean output
-        return trim(preg_replace('/\s+/',  ' ', $class));
+        return json_decode($this->directives, true);
     }
 
     /**

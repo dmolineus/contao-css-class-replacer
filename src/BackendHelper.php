@@ -87,8 +87,8 @@ class BackendHelper
      */
     public function onSubmitCallback(\DataContainer $dc)
     {
-        $rule = Rule::findByPk($dc->id);
-        $rules = new Collection(array($rule), Rule::getTable());
+        $rule = RuleModel::findByPk($dc->id);
+        $rules = new Collection(array($rule), RuleModel::getTable());
         $this->updateCacheableValues($rules);
     }
 
@@ -102,7 +102,7 @@ class BackendHelper
     public function updateCacheableValues(Collection $rules)
     {
         /**
-         * @var $rule Rule
+         * @var $rule RuleModel
          */
         foreach ($rules as $rule) {
             $rule->updateXPathExpression();

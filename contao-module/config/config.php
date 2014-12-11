@@ -14,17 +14,14 @@ $GLOBALS['BE_MOD']['design']['themes']['importCssClassReplacerRules'] = array(
 );
 
 /**
- * Hooks
+ * Events
  */
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array(
-    'Toflar\Contao\CssClassReplacer\Listener',
-    'replaceCssClasses'
-);
+$GLOBALS['TL_EVENT_SUBSCRIBERS'][] = 'Toflar\Contao\CssClassReplacer\AddRulesSubscriber';
 
 /**
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_css_class_replacer'] = 'Toflar\Contao\CssClassReplacer\Rule';
+$GLOBALS['TL_MODELS']['tl_css_class_replacer'] = 'Toflar\Contao\CssClassReplacer\RuleModel';
 
 /**
  * Maintenance

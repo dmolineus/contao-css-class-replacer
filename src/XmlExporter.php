@@ -17,7 +17,7 @@ class XmlExporter
      */
     public function export(\DataContainer $dc)
     {
-        if (($ruleCollection = Rule::findBy('pid', $dc->id, array('order' => 'sorting'))) === null) {
+        if (($ruleCollection = RuleModel::findBy('pid', $dc->id, array('order' => 'sorting'))) === null) {
             return;
         }
 
@@ -40,7 +40,7 @@ class XmlExporter
     /**
      * Creates a rule element
      *
-     * @param Rule $model
+     * @param RuleModel $model
      * @return \DOMElement
      */
     private function createRuleElement($model)
