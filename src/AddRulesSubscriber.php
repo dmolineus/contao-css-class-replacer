@@ -2,7 +2,7 @@
 
 namespace Toflar\Contao\CssClassReplacer;
 
-use Netzmacht\Contao\DomManipulator\Event\GetRulesEvent;
+use Netzmacht\Contao\DomManipulator\Event\CreateManipulatorEvent;
 use Netzmacht\Contao\DomManipulator\Events;
 use Netzmacht\DomManipulator\Filter\ValueFilter\TrimWhitespacesFilter;
 use Netzmacht\DomManipulator\Query\XPathQuery;
@@ -17,13 +17,13 @@ class AddRulesSubscriber implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return array(
-            Events::GET_RULES => array(
+            Events::CREATE_MANIPULATOR => array(
                 array('addRules', 100),
             )
         );
     }
 
-    public function addRules(GetRulesEvent $event)
+    public function addRules(CreateManipulatorEvent $event)
     {
         if (($rules = RuleModel::findPublishedByActiveTheme()) === null) {
             return;
@@ -39,6 +39,8 @@ class AddRulesSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $factory = $event->getFactory();
+
         /**
          * @var $ruleModel RuleModel
          */
@@ -49,7 +51,7 @@ class AddRulesSubscriber implements EventSubscriberInterface
             $rule->addFilter(new CssClassFilter($ruleModel->getDirectives()));
             $rule->addFilter(new TrimWhitespacesFilter());
 
-            $event->addRule($rule);
+            $factory->addRule($rule);
         }
     }
 } 
